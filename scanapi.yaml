@@ -1,0 +1,38 @@
+endpoints:
+- headers:
+    tenantId: '252941796785700167'
+  name: test_api
+  path: http://192.168.1.251:10051
+  requests:
+  - name: LoginByCode
+    body:
+      account: admin
+      password: Admin123.
+      terminal: 2
+    headers:
+      Content-Type: application/json
+    method: post
+    path: /Authorization/LoginByAccount
+    tests:
+    - name: should_return_token
+      assert: ${{ 'token' in response.json()['data'] }}
+    vars:
+      token: ${{response.json()['data']['token']}}
+  - name: GetUserInfo
+    headers:
+      Authorization: Bearer ${token}
+    method: get
+    path: /Home/GetUserInfo
+    tests:
+    - name: should_return_user
+      assert: ${{ 'user' in response.json()['data']}}
+    vars:
+      user_id: ${{response.json()['data']['user']['userId']}}
+  - name: GetUserById
+    headers:
+      Authorization: Bearer ${token}
+    method: get
+    path: /UserManager/Info?id=${user_id}
+    tests:
+    - name: should_return_user
+      assert: ${{ 'user' in response.json()['data']}}

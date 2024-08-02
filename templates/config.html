@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ task_name if task_name else "Add New Task" }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- 引入 CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/theme/eclipse.min.css">
+    <style>
+        .CodeMirror {
+            border: 1px solid #eee;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">{{ task_name if task_name else "Add New Task" }}</h1>
+        <form method="POST" id="task-form">
+            <div class="form-group">
+                <label for="task_name">Task Name:</label>
+                <input type="text" id="task_name" name="task_name" class="form-control" value="{{ task_name }}" required {% if task_name %}readonly{% endif %}>
+            </div>
+            <div class="form-group">
+                <label for="endpoints">Endpoints (YAML format):</label>
+                <textarea id="endpoints" name="endpoints" rows="15" class="form-control" >{{ endpoints }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">{{ "Update Task" if task_name else "Add Task" }}</button>
+        </form>
+    </div>
+
+    <!-- 引入 CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/mode/yaml/yaml.min.js"></script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("endpoints"), {
+            lineNumbers: true,
+            mode: "yaml",
+            theme: "eclipse"
+        });
+
+        document.getElementById('task-form').addEventListener('submit', function() {
+            document.getElementById('endpoints').value = editor.getValue();
+        });
+    </script>
+</body>
+</html>
